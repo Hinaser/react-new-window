@@ -7,38 +7,31 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 /**
- * NewWindow default props.
- */
-const defaultProps = {
-  url: '',
-  name: '',
-  title: '',
-  features: { width: '600px', height: '640px' },
-  onBlock: null,
-  onOpen: null,
-  onUnload: null,
-  center: 'parent',
-  copyStyles: true
-}
-
-/**
  * The NewWindow class object.
  * @public
  */
 
 class NewWindow extends React.PureComponent {
   /**
+   * NewWindow default props.
+   */
+  static defaultProps = {
+    url: '',
+    name: '',
+    title: '',
+    features: { width: '600px', height: '640px' },
+    onBlock: null,
+    onOpen: null,
+    onUnload: null,
+    center: 'parent',
+    copyStyles: true
+  }
+
+  /**
    * The NewWindow function constructor.
    * @param {Object} props
    */
   constructor(props) {
-    props.url = props.url ?? defaultProps.url
-    props.name = props.name ?? defaultProps.name
-    props.title = props.title ?? defaultProps.title
-    props.features = props.features ?? defaultProps.features
-    props.center = props.center ?? defaultProps.center
-    props.copyStyles = props.copyStyles ?? true
-
     super(props)
 
     this.container = document.createElement('div')

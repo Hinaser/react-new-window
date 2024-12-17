@@ -67,6 +67,6 @@ export interface INewWindowProps {
   copyStyles?: boolean;
 }
 
-interface NewWindow extends React.Component<React.PropsWithChildren<INewWindowProps>> {}
+interface NewWindow extends React.PureComponent<React.PropsWithChildren<INewWindowProps>> {}
 
 export default NewWindow;
