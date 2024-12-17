@@ -145,12 +145,13 @@ class NewWindow extends React.PureComponent {
     this.windowCheckerInterval = window.setInterval(() => {
       if (!this.window || this.window.closed) {
         console.error('setInterval called', this.windowCheckerInterval)
-        this.release()
-
         if (this.windowCheckerInterval) {
           window.clearInterval(this.windowCheckerInterval)
-          this.window = null
+          this.windowCheckerInterval = null
+          console.error('clearInterval called', this.windowCheckerInterval)
         }
+
+        this.release()
       }
     }, 50)
 
@@ -191,6 +192,7 @@ class NewWindow extends React.PureComponent {
 
     if (this.windowCheckerInterval) {
       window.clearInterval(this.windowCheckerInterval)
+      this.windowCheckerInterval = null
     }
 
     // Call any function bound to the `onUnload` prop.
