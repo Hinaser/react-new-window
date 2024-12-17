@@ -32,16 +32,15 @@ class NewWindow extends React.PureComponent {
    * @param {Object} props
    */
   constructor(props) {
-    const propsWithDefaults = Object.assign({}, defaultProps, props)
-    super(propsWithDefaults)
-    this.props = propsWithDefaults
+    super(props)
+    this.props = Object.assign({}, defaultProps, props)
 
     this.container = document.createElement('div')
     this.window = null
     this.windowCheckerInterval = null
     this.released = false
     this.state = {
-      mounted: false
+      mounted: 0
     }
     console.error('constructor called')
   }
@@ -54,8 +53,7 @@ class NewWindow extends React.PureComponent {
       'render called',
       this.state,
       this.window,
-      this.windowCheckerInterval,
-      this.released
+      this.windowCheckerInterval
     )
 
     if (!this.state.mounted) return null
@@ -65,14 +63,13 @@ class NewWindow extends React.PureComponent {
   componentDidMount() {
     console.error(
       'componentDidMount called',
-      this.released,
       this.state,
       this.window,
       this.windowCheckerInterval
     )
     this.released = false
     this.openChild()
-    this.setState({ mounted: true })
+    this.setState(prev => ({ mounted: prev.mounted + 1 }))
   }
 
   /**
@@ -88,10 +85,8 @@ class NewWindow extends React.PureComponent {
       this.window.close()
       this.window = null
     }
+
     this.release()
-    if (this.windowCheckerInterval) {
-      this.windowCheckerInterval = null
-    }
   }
 
   /**
@@ -172,23 +167,18 @@ class NewWindow extends React.PureComponent {
     }
   }
 
-  /**
-   * Release the new window and anything that was bound to it.
-   */
   release() {
-    console.error('release called', this.released)
-    // This method can be called once.
     if (this.released) {
       return
     }
     this.released = true
 
-    // Remove checker interval.
-    clearInterval(this.windowCheckerInterval)
+    if (this.windowCheckerInterval) {
+      clearTimeout(this.windowCheckerInterval)
+    }
 
     // Call any function bound to the `onUnload` prop.
     const { onUnload } = this.props
-
     if (typeof onUnload === 'function') {
       onUnload(null)
     }
