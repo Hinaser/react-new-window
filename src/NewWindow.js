@@ -36,7 +36,6 @@ class NewWindow extends React.PureComponent {
 
     this.container = document.createElement('div')
     this.window = null
-    this.windowCheckerInterval = null
     this.unmountDelayTimeout = null
     this.released = false
     this.state = {
@@ -53,7 +52,6 @@ class NewWindow extends React.PureComponent {
       'render called',
       this.state,
       this.window,
-      this.windowCheckerInterval
     )
 
     if (!this.state.mounted) return null
@@ -65,7 +63,6 @@ class NewWindow extends React.PureComponent {
       'componentDidMount called',
       this.state,
       this.window,
-      this.windowCheckerInterval
     )
     if (this.unmountDelayTimeout) {
       clearTimeout(this.unmountDelayTimeout)
@@ -84,7 +81,6 @@ class NewWindow extends React.PureComponent {
     console.error(
       'componentWillUnmount called',
       this.window,
-      this.windowCheckerInterval
     )
     this.unmountDelayTimeout = setTimeout(() => {
       if (this.window) {
@@ -142,13 +138,12 @@ class NewWindow extends React.PureComponent {
     // When a new window use content from a cross-origin there's no way we can attach event
     // to it. Therefore, we need to detect in a interval when the new window was destroyed
     // or was closed.
-    this.windowCheckerInterval = window.setInterval(() => {
+    const windowCheckerInterval = window.setInterval(() => {
       if (!this.window || this.window.closed) {
-        console.error('setInterval called', this.windowCheckerInterval)
-        if (this.windowCheckerInterval) {
-          window.clearInterval(this.windowCheckerInterval)
-          this.windowCheckerInterval = null
-          console.error('clearInterval called', this.windowCheckerInterval)
+        console.error('setInterval called', windowCheckerInterval)
+        if (windowCheckerInterval) {
+          window.clearInterval(windowCheckerInterval)
+          console.error('clearInterval called', windowCheckerInterval)
         }
 
         this.release()
@@ -189,11 +184,6 @@ class NewWindow extends React.PureComponent {
       return
     }
     this.released = true
-
-    if (this.windowCheckerInterval) {
-      window.clearInterval(this.windowCheckerInterval)
-      this.windowCheckerInterval = null
-    }
 
     // Call any function bound to the `onUnload` prop.
     const { onUnload } = this.props
