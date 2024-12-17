@@ -21,7 +21,9 @@
     "types"
   ],
   "types": "./types/NewWindow.d.ts",
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "prop-types": "^15.7.2"
   },
@@ -43,21 +45,21 @@
     "np": "^2.20.1",
     "prettier": "^1.17.1",
     "pretty-quick": "^1.11.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-test-renderer": "^16.8.6",
-    "rollup": "^0.57.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-test-renderer": "^18.3.1",
+    "rollup": "^0.68.2",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-filesize": "^1.4.2",
+    "rollup-plugin-filesize": "^10.0.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-uglify": "^3.0.0",
     "uglify-es": "^3.3.10"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
