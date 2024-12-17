@@ -146,6 +146,8 @@ class NewWindow extends React.PureComponent {
       if (!this.window || this.window.closed) {
         console.error('setInterval called')
         this.release()
+
+        clearInterval(this.windowCheckerInterval)
       }
     }, 50)
 
