@@ -5,7 +5,21 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+
+/**
+ * NewWindow default props.
+ */
+const defaultProps = {
+  url: '',
+  name: '',
+  title: '',
+  features: { width: '600px', height: '640px' },
+  onBlock: null,
+  onOpen: null,
+  onUnload: null,
+  center: 'parent',
+  copyStyles: true
+}
 
 /**
  * The NewWindow class object.
@@ -14,26 +28,14 @@ import PropTypes from 'prop-types'
 
 class NewWindow extends React.PureComponent {
   /**
-   * NewWindow default props.
-   */
-  static defaultProps = {
-    url: '',
-    name: '',
-    title: '',
-    features: { width: '600px', height: '640px' },
-    onBlock: null,
-    onOpen: null,
-    onUnload: null,
-    center: 'parent',
-    copyStyles: true
-  }
-
-  /**
    * The NewWindow function constructor.
    * @param {Object} props
    */
   constructor(props) {
-    super(props)
+    const propsWithDefaults = Object.assign({}, defaultProps, props)
+    super(propsWithDefaults)
+    this.props = propsWithDefaults
+
     this.container = document.createElement('div')
     this.window = null
     this.windowCheckerInterval = null
@@ -52,6 +54,7 @@ class NewWindow extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.released = false
     this.openChild()
     this.setState({ mounted: true })
   }
@@ -140,6 +143,11 @@ class NewWindow extends React.PureComponent {
   componentWillUnmount() {
     if (this.window) {
       this.window.close()
+      this.window = null
+    }
+    this.release()
+    if (this.windowCheckerInterval) {
+      this.windowCheckerInterval = null
     }
   }
 
@@ -163,19 +171,6 @@ class NewWindow extends React.PureComponent {
       onUnload(null)
     }
   }
-}
-
-NewWindow.propTypes = {
-  children: PropTypes.node,
-  url: PropTypes.string,
-  name: PropTypes.string,
-  title: PropTypes.string,
-  features: PropTypes.object,
-  onUnload: PropTypes.func,
-  onBlock: PropTypes.func,
-  onOpen: PropTypes.func,
-  center: PropTypes.oneOf(['parent', 'screen']),
-  copyStyles: PropTypes.bool
 }
 
 /**
