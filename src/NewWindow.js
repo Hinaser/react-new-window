@@ -5,7 +5,6 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
 
 /**
  * The NewWindow class object.
@@ -34,12 +33,13 @@ class NewWindow extends React.PureComponent {
    */
   constructor(props) {
     super(props)
+
     this.container = document.createElement('div')
     this.window = null
-    this.windowCheckerInterval = null
+    this.unmountDelayTimeout = null
     this.released = false
     this.state = {
-      mounted: false
+      mounted: 0
     }
   }
 
@@ -52,8 +52,28 @@ class NewWindow extends React.PureComponent {
   }
 
   componentDidMount() {
+    if (this.unmountDelayTimeout) {
+      clearTimeout(this.unmountDelayTimeout)
+      this.unmountDelayTimeout = null
+    }
+
+    this.released = false
     this.openChild()
-    this.setState({ mounted: true })
+    this.setState(prev => ({ mounted: prev.mounted + 1 }))
+  }
+
+  /**
+   * Close the opened window (if any) when NewWindow will unmount.
+   */
+  componentWillUnmount() {
+    this.unmountDelayTimeout = setTimeout(() => {
+      if (this.window) {
+        this.window.close()
+        this.window = null
+      }
+
+      this.release()
+    }, 13)
   }
 
   /**
@@ -102,8 +122,12 @@ class NewWindow extends React.PureComponent {
     // When a new window use content from a cross-origin there's no way we can attach event
     // to it. Therefore, we need to detect in a interval when the new window was destroyed
     // or was closed.
-    this.windowCheckerInterval = setInterval(() => {
+    const windowCheckerInterval = window.setInterval(() => {
       if (!this.window || this.window.closed) {
+        if (windowCheckerInterval) {
+          window.clearInterval(windowCheckerInterval)
+        }
+
         this.release()
       }
     }, 50)
@@ -123,7 +147,9 @@ class NewWindow extends React.PureComponent {
       }
 
       // Release anything bound to this component before the new window unload.
-      this.window.addEventListener('beforeunload', () => this.release())
+      this.window.addEventListener('beforeunload', () => {
+        this.release()
+      })
     } else {
       // Handle error on opening of new window.
       if (typeof onBlock === 'function') {
@@ -134,48 +160,18 @@ class NewWindow extends React.PureComponent {
     }
   }
 
-  /**
-   * Close the opened window (if any) when NewWindow will unmount.
-   */
-  componentWillUnmount() {
-    if (this.window) {
-      this.window.close()
-    }
-  }
-
-  /**
-   * Release the new window and anything that was bound to it.
-   */
   release() {
-    // This method can be called once.
     if (this.released) {
       return
     }
     this.released = true
 
-    // Remove checker interval.
-    clearInterval(this.windowCheckerInterval)
-
     // Call any function bound to the `onUnload` prop.
     const { onUnload } = this.props
-
     if (typeof onUnload === 'function') {
       onUnload(null)
     }
   }
-}
-
-NewWindow.propTypes = {
-  children: PropTypes.node,
-  url: PropTypes.string,
-  name: PropTypes.string,
-  title: PropTypes.string,
-  features: PropTypes.object,
-  onUnload: PropTypes.func,
-  onBlock: PropTypes.func,
-  onOpen: PropTypes.func,
-  center: PropTypes.oneOf(['parent', 'screen']),
-  copyStyles: PropTypes.bool
 }
 
 /**
@@ -197,7 +193,7 @@ function copyStyles(source, target) {
     try {
       rules = styleSheet.cssRules
     } catch (err) {
-      console.error(err)
+      console.warn(err)
     }
 
     // For @font-face rule, it must be loaded via <link href=''> because the
