@@ -41,29 +41,17 @@ class NewWindow extends React.PureComponent {
     this.state = {
       mounted: 0
     }
-    console.error('constructor called')
   }
 
   /**
    * Render the NewWindow component.
    */
   render() {
-    console.error(
-      'render called',
-      this.state,
-      this.window,
-    )
-
     if (!this.state.mounted) return null
     return ReactDOM.createPortal(this.props.children, this.container)
   }
 
   componentDidMount() {
-    console.error(
-      'componentDidMount called',
-      this.state,
-      this.window,
-    )
     if (this.unmountDelayTimeout) {
       clearTimeout(this.unmountDelayTimeout)
       this.unmountDelayTimeout = null
@@ -78,10 +66,6 @@ class NewWindow extends React.PureComponent {
    * Close the opened window (if any) when NewWindow will unmount.
    */
   componentWillUnmount() {
-    console.error(
-      'componentWillUnmount called',
-      this.window,
-    )
     this.unmountDelayTimeout = setTimeout(() => {
       if (this.window) {
         this.window.close()
@@ -140,10 +124,8 @@ class NewWindow extends React.PureComponent {
     // or was closed.
     const windowCheckerInterval = window.setInterval(() => {
       if (!this.window || this.window.closed) {
-        console.error('setInterval called', windowCheckerInterval)
         if (windowCheckerInterval) {
           window.clearInterval(windowCheckerInterval)
-          console.error('clearInterval called', windowCheckerInterval)
         }
 
         this.release()
@@ -166,7 +148,6 @@ class NewWindow extends React.PureComponent {
 
       // Release anything bound to this component before the new window unload.
       this.window.addEventListener('beforeunload', () => {
-        console.error('beforeunload called')
         this.release()
       })
     } else {
@@ -212,7 +193,7 @@ function copyStyles(source, target) {
     try {
       rules = styleSheet.cssRules
     } catch (err) {
-      console.error(err)
+      console.warn(err)
     }
 
     // For @font-face rule, it must be loaded via <link href=''> because the
