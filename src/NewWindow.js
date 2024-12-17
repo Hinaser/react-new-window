@@ -43,20 +43,55 @@ class NewWindow extends React.PureComponent {
     this.state = {
       mounted: false
     }
+    console.error('constructor called')
   }
 
   /**
    * Render the NewWindow component.
    */
   render() {
+    console.error(
+      'render called',
+      this.state,
+      this.window,
+      this.windowCheckerInterval,
+      this.released
+    )
+
     if (!this.state.mounted) return null
     return ReactDOM.createPortal(this.props.children, this.container)
   }
 
   componentDidMount() {
+    console.error(
+      'componentDidMount called',
+      this.released,
+      this.state,
+      this.window,
+      this.windowCheckerInterval
+    )
     this.released = false
     this.openChild()
     this.setState({ mounted: true })
+  }
+
+  /**
+   * Close the opened window (if any) when NewWindow will unmount.
+   */
+  componentWillUnmount() {
+    console.error(
+      'componentWillUnmount called',
+      this.window,
+      this.windowCheckerInterval
+    )
+    if (this.window) {
+      this.window.close()
+      this.window = null
+    }
+    this.release()
+    if (this.windowCheckerInterval) {
+      this.windowCheckerInterval = null
+    }
   }
 
   /**
@@ -138,23 +173,10 @@ class NewWindow extends React.PureComponent {
   }
 
   /**
-   * Close the opened window (if any) when NewWindow will unmount.
-   */
-  componentWillUnmount() {
-    if (this.window) {
-      this.window.close()
-      this.window = null
-    }
-    this.release()
-    if (this.windowCheckerInterval) {
-      this.windowCheckerInterval = null
-    }
-  }
-
-  /**
    * Release the new window and anything that was bound to it.
    */
   release() {
+    console.error('release called', this.released)
     // This method can be called once.
     if (this.released) {
       return
