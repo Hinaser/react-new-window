@@ -1,7 +1,7 @@
 {
   "name": "@hinaser/react-new-window",
   "description": "🔲 Pop a new window in React, using window.open",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "keywords": [
     "react",
     "window",

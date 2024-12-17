@@ -38,6 +38,7 @@ class NewWindow extends React.PureComponent {
     this.container = document.createElement('div')
     this.window = null
     this.windowCheckerInterval = null
+    this.unmountDelay = null
     this.released = false
     this.state = {
       mounted: 0
@@ -67,6 +68,11 @@ class NewWindow extends React.PureComponent {
       this.window,
       this.windowCheckerInterval
     )
+    if (this.unmountDelay) {
+      clearTimeout(this.unmountDelay)
+      this.unmountDelay = null
+    }
+
     this.released = false
     this.openChild()
     this.setState(prev => ({ mounted: prev.mounted + 1 }))
@@ -81,12 +87,14 @@ class NewWindow extends React.PureComponent {
       this.window,
       this.windowCheckerInterval
     )
-    if (this.window) {
-      this.window.close()
-      this.window = null
-    }
+    this.unmountDelay = setTimeout(() => {
+      if (this.window) {
+        this.window.close()
+        this.window = null
+      }
 
-    this.release()
+      this.release()
+    }, 13)
   }
 
   /**
@@ -137,6 +145,7 @@ class NewWindow extends React.PureComponent {
     // or was closed.
     this.windowCheckerInterval = setInterval(() => {
       if (!this.window || this.window.closed) {
+        console.error('setInterval called')
         this.release()
       }
     }, 50)
@@ -156,7 +165,10 @@ class NewWindow extends React.PureComponent {
       }
 
       // Release anything bound to this component before the new window unload.
-      this.window.addEventListener('beforeunload', () => this.release())
+      this.window.addEventListener('beforeunload', () => {
+        console.error('beforeunload called')
+        this.release()
+      })
     } else {
       // Handle error on opening of new window.
       if (typeof onBlock === 'function') {
