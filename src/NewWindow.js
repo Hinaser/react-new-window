@@ -32,13 +32,19 @@ class NewWindow extends React.PureComponent {
    * @param {Object} props
    */
   constructor(props) {
+    props.url = props.url ?? defaultProps.url
+    props.name = props.name ?? defaultProps.name
+    props.title = props.title ?? defaultProps.title
+    props.features = props.features ?? defaultProps.features
+    props.center = props.center ?? defaultProps.center
+    props.copyStyles = props.copyStyles ?? true
+
     super(props)
-    this.props = Object.assign({}, defaultProps, props)
 
     this.container = document.createElement('div')
     this.window = null
     this.windowCheckerInterval = null
-    this.unmountDelay = null
+    this.unmountDelayTimeout = null
     this.released = false
     this.state = {
       mounted: 0
@@ -68,9 +74,9 @@ class NewWindow extends React.PureComponent {
       this.window,
       this.windowCheckerInterval
     )
-    if (this.unmountDelay) {
-      clearTimeout(this.unmountDelay)
-      this.unmountDelay = null
+    if (this.unmountDelayTimeout) {
+      clearTimeout(this.unmountDelayTimeout)
+      this.unmountDelayTimeout = null
     }
 
     this.released = false
@@ -87,7 +93,7 @@ class NewWindow extends React.PureComponent {
       this.window,
       this.windowCheckerInterval
     )
-    this.unmountDelay = setTimeout(() => {
+    this.unmountDelayTimeout = setTimeout(() => {
       if (this.window) {
         this.window.close()
         this.window = null
@@ -186,7 +192,7 @@ class NewWindow extends React.PureComponent {
     this.released = true
 
     if (this.windowCheckerInterval) {
-      clearTimeout(this.windowCheckerInterval)
+      clearInterval(this.windowCheckerInterval)
     }
 
     // Call any function bound to the `onUnload` prop.

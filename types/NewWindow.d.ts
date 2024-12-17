@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 
 declare module 'react-new-window' {
   type EventHandler = () => void
