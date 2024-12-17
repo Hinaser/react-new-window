@@ -142,12 +142,15 @@ class NewWindow extends React.PureComponent {
     // When a new window use content from a cross-origin there's no way we can attach event
     // to it. Therefore, we need to detect in a interval when the new window was destroyed
     // or was closed.
-    this.windowCheckerInterval = setInterval(() => {
+    this.windowCheckerInterval = window.setInterval(() => {
       if (!this.window || this.window.closed) {
-        console.error('setInterval called')
+        console.error('setInterval called', this.windowCheckerInterval)
         this.release()
 
-        clearInterval(this.windowCheckerInterval)
+        if (this.windowCheckerInterval) {
+          window.clearInterval(this.windowCheckerInterval)
+          this.window = null
+        }
       }
     }, 50)
 
@@ -187,7 +190,7 @@ class NewWindow extends React.PureComponent {
     this.released = true
 
     if (this.windowCheckerInterval) {
-      clearInterval(this.windowCheckerInterval)
+      window.clearInterval(this.windowCheckerInterval)
     }
 
     // Call any function bound to the `onUnload` prop.
