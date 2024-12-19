@@ -1,7 +1,7 @@
 {
   "name": "@hinaser/react-new-window",
   "description": "🔲 Pop a new window in React, using window.open",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [
     "react",
     "window",
@@ -32,6 +32,7 @@
     "@storybook/addon-actions": "^5.0.11",
     "@storybook/addon-links": "^5.0.11",
     "@storybook/react": "^5.0.11",
+    "@types/react": "^18.3.12",
     "babel-eslint": "^10.0.1",
     "cross-env": "^5.2.0",
     "eslint": "^4.19.1",
